@@ -18,13 +18,13 @@
                 <td>{{ share[0] }}</td>
                 <td>{{ share[1] }}</td>
                 <td>{{ share[2] }}</td>
-                <td>${{ share[3]/100 }}</td>
-                <td>${{ (share[3]*share[2])/100 }}</td>
+                <td>${{ share[3] }}</td>
+                <td>${{ (share[3]*share[2]) }}</td>
             </tr>
         {% endfor %}
         <tr>
             <td colspan="4">CASH</td>
-            <td>${{ current_user.balance/100 }}</td>
+            <td>${{ cash }}</td>
         </tr>
         <tr>
             <td colspan="4"></td>

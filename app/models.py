@@ -9,7 +9,7 @@ class User(UserMixin,db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), index=True, unique=True)
     password_hash = db.Column(db.String(128))
-    balance = db.Column(db.Integer)
+    balance = db.Column(db.Float(precision=64))
     transactions = db.relationship('Transaction', backref='buyer', lazy='dynamic')
     
     def __repr__(self):
@@ -24,14 +24,15 @@ class User(UserMixin,db.Model):
     def buy_stock(self, quote, qty):
         ticker = quote['symbol']
         name = quote['companyName']
-        price = float(quote['latestPrice'])
-        txnAmount = price * 100 * qty
+        price = round(float(quote['latestPrice']),2)
+        txnAmount = price * qty
         if txnAmount > self.balance:
             return False
         
         #Add it in transactions
         newTxn = Transaction(ticker=ticker,name=name, qty=qty, price=txnAmount)
         self.balance -= txnAmount
+        self.balance = round(self.balance,2)
         self.transactions.append(newTxn)
         db.session.commit()
 
@@ -40,8 +41,8 @@ class User(UserMixin,db.Model):
     def sell_stock(self, quote, qty):
         ticker = quote['symbol']
         name = quote['companyName']
-        price = float(quote['latestPrice'])
-        txnAmount = price * 100 * qty
+        price = round(float(quote['latestPrice']),2)
+        txnAmount = price * qty
 
         qtyAvailable = db.session.query(db.func.sum(Transaction.qty)).filter(
                                         Transaction.user_id==self.id).filter(
@@ -52,6 +53,7 @@ class User(UserMixin,db.Model):
 
         newTxn = Transaction(ticker=ticker, name=name, qty=-qty, price=txnAmount)
         self.balance += txnAmount
+        self.balance = round(self.balance,2)
         self.transactions.append(newTxn)
         db.session.commit()
 
@@ -64,7 +66,7 @@ class Transaction(db.Model):
     ticker = db.Column(db.String(15),index=True)
     name = db.Column(db.String(30))
     qty = db.Column(db.Integer)
-    price = db.Column(db.Integer)
+    price = db.Column(db.Float(precision=64))
     timestamp = db.Column(db.Integer, index=True, default=datetime.utcnow)
 
     def __repr__(self):

@@ -15,13 +15,14 @@ def index():
                                         Transaction.ticker).having(
                                         db.func.sum(Transaction.qty)>0).all()
     shares = []
-    total_value = current_user.balance/100
+    cash = round(current_user.balance,2)
+    total_value = cash
     for stock in current_stocks:
-        latest_price = int(get_quote(stock[0])['latestPrice']*100)
-        total_value += (latest_price*stock[2])/100
-        shares.append((stock[0],stock[1],stock[2],latest_price))
+        latest_price = round(float(get_quote(stock[0])['latestPrice']),2)
+        total_value += (latest_price*stock[2])
+        shares.append((stock[0],stock[1],stock[2],round(latest_price,2)))
 
-    return render_template('index.html', title='Portfolio', shares=shares, total_value=total_value)
+    return render_template('index.html', title='Portfolio', shares=shares, total_value=round(total_value,2), cash=cash)
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -47,7 +48,7 @@ def register():
         #Adding New User to db
         newUser = User(email=form.email.data)
         newUser.set_password(form.password.data)
-        newUser.balance = 1000000
+        newUser.balance = 10000
         db.session.add(newUser)
         db.session.commit()
 
@@ -69,7 +70,7 @@ def logout():
 def quote():
     form = QuoteForm()
     if form.validate_on_submit():
-        price = get_quote(form.ticker.data)['latestPrice']
+        price = round(float(get_quote(form.ticker.data)['latestPrice']),2)
         if not price:
             flash('Invalid Ticker. Please try again.')
             return redirect(url_for('quote'))

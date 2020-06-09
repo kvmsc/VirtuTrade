@@ -17,7 +17,7 @@
                 <td>{{ transaction.ticker }}</td>
                 <td>{{ transaction.name }}</td>
                 <td>{{ transaction.qty }}</td>
-                <td>${{ transaction.price/100 }}</td>
+                <td>${{ transaction.price }}</td>
                 <td>{{ transaction.timestamp[:-7] }}</td>
             </tr>
         {% endfor %}
