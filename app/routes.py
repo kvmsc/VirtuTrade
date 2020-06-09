@@ -11,7 +11,7 @@ from helper import get_quote, get_quote_latest
 def index():
     current_stocks = db.session.query(Transaction.ticker, Transaction.name, 
                                         db.func.sum(Transaction.qty)).filter(
-                                        Transaction.user_id==1).group_by(
+                                        Transaction.user_id==current_user.id).group_by(
                                         Transaction.ticker).having(
                                         db.func.sum(Transaction.qty)>0).all()
     shares = []
