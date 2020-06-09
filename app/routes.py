@@ -102,7 +102,7 @@ def buy():
 @login_required
 def sell():
     stock_list = db.session.query(Transaction.ticker,Transaction.name).filter(
-                                    Transaction.user_id==1).group_by(Transaction.ticker).having(
+                                    Transaction.user_id==current_user.id).group_by(Transaction.ticker).having(
                                     db.func.sum(Transaction.qty) > 0).all()
     form = SellForm()
     form.ticker.choices = stock_list
