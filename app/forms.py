@@ -1,0 +1,38 @@
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from app.models import User
+
+class LoginForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+    submit = SubmitField('Sign In')
+
+
+class RegistrationForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Repeat Password', validators=[DataRequired(),
+                                           EqualTo('password')])
+    submit = SubmitField('Register')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
+
+class QuoteForm(FlaskForm):
+    ticker = StringField('Enter Symbol, eg. GOOGL', validators=[DataRequired()])
+    submit = SubmitField('Get Quote')
+
+class BuyForm(FlaskForm):
+    ticker = StringField('Enter Symbol', validators=[DataRequired()])
+    qty = IntegerField('Enter quantity', validators=[DataRequired()])
+    submit = SubmitField('Buy')
+
+class SellForm(FlaskForm):
+    ticker = SelectField('Select Stock', validators=[DataRequired()])
+    qty = IntegerField('Enter quantity', validators=[DataRequired()])
+    submit =SubmitField('Sell')

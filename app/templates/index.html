@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h1>Your Portfolio</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Avg. Latest Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for share in shares %}
+            <tr>
+                <td>{{ share[0] }}</td>
+                <td>{{ share[1] }}</td>
+                <td>{{ share[2] }}</td>
+                <td>${{ share[3]/100 }}</td>
+                <td>${{ (share[3]*share[2])/100 }}</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4">CASH</td>
+            <td>${{ current_user.balance/100 }}</td>
+        </tr>
+        <tr>
+            <td colspan="4"></td>
+            <td>${{ total_value }}</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

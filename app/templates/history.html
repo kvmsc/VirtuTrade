@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Shares</th>
+            <th>Price</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for transaction in transactions %}
+            <tr style="color: {{ "red" if transaction.qty < 0 else "green" }};">
+                <td>{{ transaction.ticker }}</td>
+                <td>{{ transaction.name }}</td>
+                <td>{{ transaction.qty }}</td>
+                <td>${{ transaction.price/100 }}</td>
+                <td>{{ transaction.timestamp[:-7] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
